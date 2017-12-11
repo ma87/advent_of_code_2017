@@ -11,101 +11,72 @@
 
 using namespace std;
 
+int get_max(int a, int b, int c)
+{
+    int max = a;
+    if (b > max)
+    {
+      max = b;
+    }
+    if (c > max)
+    {
+      max = c;
+    }
+    return max;
+}
+
 int main(int argc, char * argv[])
 {
+
+  // Get inspiration from http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/
+
   std::ifstream f;
   f.open(argv[1]);
   string direction;
 
-  double child_x = 0;
-  double child_y = 0;
-  double sqrt_3_over_2 = 1;
-  cout << "pos child " << child_x << " , " << child_y << endl << endl;
+  int child_x = 0;
+  int child_y = 0;
+  int child_z = 0;
+  int furthest = 0;
+  int tmp_distance;
   while(std::getline(f, direction, ','))
   {
-    cout << direction << endl;
     if (direction == "n")
     {
-      child_y += 1.0;
+      child_y++;
     }
     else if (direction == "ne")
     {
-      child_y += 0.5;
-      child_x += sqrt_3_over_2;
+      child_x++;
     }
     else if (direction == "se")
     {
-      child_y -= 0.5;
-      child_x += sqrt_3_over_2;
+      child_y--;
+      child_x++;
     }
     else if (direction == "s")
     {
-      child_y -= 1.0;
+      child_y--;
     }
     else if (direction == "sw")
     {
-      child_x -= sqrt_3_over_2;
-      child_y -= 0.5;
+      child_x--;
     }
     else if (direction == "nw")
     {
-      child_y += 0.5;
-      child_x -= sqrt_3_over_2;
+      child_y++;
+      child_x--;
     }
-    cout << "pos child " << child_x << " , " << child_y << endl << endl;
+    child_z = -child_x - child_y;
+    tmp_distance = get_max(child_x, child_y, child_z);
+    if (tmp_distance > furthest)
+    {
+      furthest = tmp_distance;
+    }
   }
 
-  cout << "FINAL pos child " << child_x << " , " << child_y << endl;
+  cout << "distance = " << get_max(child_x, child_y, child_z) << endl;
+  cout << "furthest = " << furthest << endl;
 
-
-  int step = 0;
-  double cur_x = 0.0;
-  double cur_y = 0.0;
-  while ((cur_x != child_x) || (cur_y != child_y))
-  {
-    if (cur_x != child_x)
-    {
-      if ((child_x < 0) & (child_y > 0)) // GO nw
-      {
-        cur_y += 0.5;
-        cur_x -= sqrt_3_over_2;
-      }
-      else if ((child_x < 0) & (child_y < 0)) // GO sw
-      {
-        cur_x -= sqrt_3_over_2;
-        cur_y -= 0.5;
-      }
-      if ((child_x > 0) & (child_y > 0)) // GO ne
-      {
-        cur_y += 0.5;
-        cur_x += sqrt_3_over_2;
-      }
-      else if ((child_x > 0) & (child_y < 0)) // GO se
-      {
-        cur_x += sqrt_3_over_2;
-        cur_y -= 0.5;
-      }
-    }
-    else
-    {
-      if (cur_y > child_y) // GO s
-      {
-        cur_y -= 1.0;
-      }
-      else // GO n
-      {
-        cur_y += 1.0;
-      }
-    }
-
-    step++;
-  }
-
-  cout << "FINAL cur " << cur_x << " , " << cur_y << endl;
-
-  cout << step << endl;
-
-  int step2 = child_x / sqrt_3_over_2;
-  step2 += abs(child_y) - (step2 * 0.5);
-  cout << step2 << endl;
+  return 0;
 }
